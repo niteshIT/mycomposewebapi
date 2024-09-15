@@ -1,0 +1,17 @@
+services:
+  mycomposewebapi:
+    image: ${DOCKER_REGISTRY-}mycomposewebapi
+    build:
+      context: .
+      dockerfile: mycomposewebapi/Dockerfile
+    ports:
+      - "5036:8080"
+
+  secondservice:
+    image: ${DOCKER_REGISTRY-}secondservice
+    build:
+      context: .
+      dockerfile: secondService/Dockerfile
+    ports:
+      - "5282:8080"
+
