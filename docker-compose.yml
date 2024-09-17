@@ -1,4 +1,15 @@
 services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=YourPassword123!
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+
   mycomposewebapi:
     image: ${DOCKER_REGISTRY-}mycomposewebapi
     build:
@@ -6,6 +17,8 @@ services:
       dockerfile: mycomposewebapi/Dockerfile
     ports:
       - "5036:8080"
+    depends_on:
+      - db
 
   secondservice:
     image: ${DOCKER_REGISTRY-}secondservice
@@ -14,4 +27,11 @@ services:
       dockerfile: secondService/Dockerfile
     ports:
       - "5282:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__BookAppCS=Server=db;Database=BookDb;User=sa;Password=YourPassword123!;Encrypt=false;TrustServerCertificate=True
+    depends_on:
+        - db
 
+volumes:
+  mssql-data:
